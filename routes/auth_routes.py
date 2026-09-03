@@ -1,3 +1,4 @@
+
 from flask import Blueprint, request, jsonify
 import jwt
 from datetime import datetime, timedelta
@@ -7,11 +8,20 @@ from config import Config
 from database.db import get_db_connection
 
 
-auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
+auth_bp = Blueprint(
+    "auth",
+    __name__,
+    url_prefix="/api/auth"
+)
 
+
+# =========================================================
+# REGISTER
+# =========================================================
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
+
     data = request.get_json(silent=True)
 
     if not data:
@@ -30,13 +40,18 @@ def register():
             "error": "name, email and password are required"
         }), 400
 
+    name = name.strip()
+    email = email.strip().lower()
+
     connection = None
     cursor = None
 
     try:
+
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
 
+        # Check existing email
         cursor.execute(
             "SELECT id FROM users WHERE email = %s",
             (email,)
@@ -50,11 +65,14 @@ def register():
                 "error": "Email already registered"
             }), 409
 
+        # Hash password
         password_hash = generate_password_hash(password)
 
+        # Insert user
         cursor.execute(
             """
-            INSERT INTO users (name, email, password_hash)
+            INSERT INTO users
+            (name, email, password_hash)
             VALUES (%s, %s, %s)
             """,
             (name, email, password_hash)
@@ -68,10 +86,11 @@ def register():
         }), 201
 
     except Exception as e:
+
         if connection:
             connection.rollback()
 
-        print(f"Registration error: {e}")
+        print("REGISTRATION ERROR:", e)
 
         return jsonify({
             "success": False,
@@ -79,6 +98,7 @@ def register():
         }), 500
 
     finally:
+
         if cursor:
             cursor.close()
 
@@ -86,8 +106,13 @@ def register():
             connection.close()
 
 
+# =========================================================
+# LOGIN
+# =========================================================
+
 @auth_bp.route("/login", methods=["POST"])
 def login():
+
     data = request.get_json(silent=True)
 
     if not data:
@@ -105,12 +130,19 @@ def login():
             "error": "email and password are required"
         }), 400
 
+    email = email.strip().lower()
+
     connection = None
     cursor = None
 
     try:
+
         connection = get_db_connection()
         cursor = connection.cursor(dictionary=True)
+
+        # =====================================================
+        # FIND USER
+        # =====================================================
 
         cursor.execute(
             """
@@ -123,14 +155,47 @@ def login():
 
         user = cursor.fetchone()
 
-        if not user or not check_password_hash(
-            user["password_hash"],
-            password
-        ):
+        if not user:
+
+            print(
+                "LOGIN DEBUG: User not found:",
+                email
+            )
+
             return jsonify({
                 "success": False,
                 "error": "Invalid email or password"
             }), 401
+
+        # =====================================================
+        # CHECK PASSWORD
+        # =====================================================
+
+        password_valid = check_password_hash(
+            user["password_hash"],
+            password
+        )
+
+        print(
+            "LOGIN DEBUG: Email:",
+            email
+        )
+
+        print(
+            "LOGIN DEBUG: Password valid:",
+            password_valid
+        )
+
+        if not password_valid:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid email or password"
+            }), 401
+
+        # =====================================================
+        # CREATE JWT
+        # =====================================================
 
         payload = {
             "user_id": user["id"],
@@ -144,18 +209,40 @@ def login():
             algorithm="HS256"
         )
 
+        # =====================================================
+        # SUCCESS RESPONSE
+        # =====================================================
+        #
+        # IMPORTANT:
+        # We return BOTH "token" and "access_token"
+        # so frontend will definitely receive it.
+        #
+        # =====================================================
+
         return jsonify({
+
             "success": True,
+
+            "message": "Login successful",
+
+            "token": token,
+
             "access_token": token,
+
             "user": {
                 "id": user["id"],
                 "name": user["name"],
                 "email": user["email"]
             }
+
         }), 200
 
     except Exception as e:
-        print(f"Login error: {e}")
+
+        print(
+            "LOGIN ERROR:",
+            e
+        )
 
         return jsonify({
             "success": False,
@@ -163,8 +250,10 @@ def login():
         }), 500
 
     finally:
+
         if cursor:
             cursor.close()
 
         if connection:
             connection.close()
+

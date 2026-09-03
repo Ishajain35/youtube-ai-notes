@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>YouTube AI Notes - Register</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="auth-container">
+
+        <div class="auth-card">
+
+            <h1>YouTube AI Notes</h1>
+
+            <p class="subtitle">
+                Create your account and start learning smarter.
+            </p>
+
+            <h2>Create Account</h2>
+
+            <form id="registerForm">
+
+                <div class="form-group">
+                    <label for="name">Name</label>
+
+                    <input
+                        type="text"
+                        id="name"
+                        placeholder="Enter your name"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+
+                    <input
+                        type="password"
+                        id="password"
+                        placeholder="Create a password"
+                        required
+                    >
+                </div>
+
+                <button type="submit">
+                    Create Account
+                </button>
+
+                <p id="message"></p>
+
+            </form>
+
+            <p class="auth-link">
+                Already have an account?
+                <a href="index.html">Login here</a>
+            </p>
+
+        </div>
+
+    </div>
+    <script src="app.js"></script>
+
+</body>
+</html>

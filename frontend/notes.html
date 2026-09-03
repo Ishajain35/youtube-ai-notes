@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>YouTube AI Notes</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+
+<body class="notes-page">
+
+
+    <!-- HEADER -->
+
+    <header class="notes-header">
+
+        <div>
+
+            <h1>
+                YouTube AI Notes
+            </h1>
+
+            <p>
+                AI Generated Study Material
+            </p>
+
+        </div>
+
+
+        <button
+            id="backBtn"
+            class="back-btn"
+            type="button"
+        >
+            ← Back to Dashboard
+        </button>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="notes-container">
+
+
+        <!-- VIDEO -->
+
+        <section class="video-info-card">
+
+            <img
+                id="videoThumbnail"
+                class="video-thumbnail"
+                src=""
+                alt="YouTube video thumbnail"
+            >
+
+            <div class="video-info">
+
+                <h2 id="videoTitle">
+                    Loading video...
+                </h2>
+
+                <p id="videoDate"></p>
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGE -->
+
+        <div
+            id="notesMessage"
+            class="notes-message"
+            style="display: block;"
+        >
+            Loading notes...
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <section class="notes-card">
+
+            <div class="card-heading">
+
+                <span class="card-icon">
+                    📝
+                </span>
+
+                <h2>
+                    Summary
+                </h2>
+
+            </div>
+
+            <div
+                id="summary"
+                class="summary-content"
+            >
+                Loading summary...
+            </div>
+
+        </section>
+
+
+        <!-- KEY POINTS -->
+
+        <section class="notes-card">
+
+            <div class="card-heading">
+
+                <span class="card-icon">
+                    💡
+                </span>
+
+                <h2>
+                    Key Points
+                </h2>
+
+            </div>
+
+            <div id="keyPoints">
+
+                Loading key points...
+
+            </div>
+
+        </section>
+
+
+        <!-- DETAILED NOTES -->
+
+        <section class="notes-card">
+
+            <div class="card-heading">
+
+                <span class="card-icon">
+                    📚
+                </span>
+
+                <h2>
+                    Detailed Notes
+                </h2>
+
+            </div>
+
+            <div id="detailedNotes">
+
+                Loading detailed notes...
+
+            </div>
+
+        </section>
+
+
+        <!-- IMPORTANT CONCEPTS -->
+
+        <section class="notes-card">
+
+            <div class="card-heading">
+
+                <span class="card-icon">
+                    🧠
+                </span>
+
+                <h2>
+                    Important Concepts
+                </h2>
+
+            </div>
+
+            <div id="concepts">
+
+                Loading concepts...
+
+            </div>
+
+        </section>
+
+
+        <!-- EXAMPLES -->
+
+        <section class="notes-card">
+
+            <div class="card-heading">
+
+                <span class="card-icon">
+                    💻
+                </span>
+
+                <h2>
+                    Examples
+                </h2>
+
+            </div>
+
+            <div id="examples">
+
+                Loading examples...
+
+            </div>
+
+        </section>
+
+
+        <!-- QUICK REVISION -->
+
+        <section class="notes-card">
+
+            <div class="card-heading">
+
+                <span class="card-icon">
+                    ⚡
+                </span>
+
+                <h2>
+                    Quick Revision
+                </h2>
+
+            </div>
+
+            <div id="quickRevision">
+
+                Loading quick revision...
+
+            </div>
+
+        </section>
+
+
+        <!-- REVISION QUESTIONS -->
+
+        <section class="notes-card">
+
+            <div class="card-heading">
+
+                <span class="card-icon">
+                    ❓
+                </span>
+
+                <h2>
+                    Revision Questions
+                </h2>
+
+            </div>
+
+            <div id="revisionQuestions">
+
+                Loading revision questions...
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- IMPORTANT:
+         app.js MUST be loaded here -->
+
+    <script src="./app.js"></script>
+
+</body>
+
+</html>
