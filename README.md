@@ -1,6 +1,6 @@
 # YouTube AI Notes
 
-An AI-powered Flask application that converts YouTube videos into clear study notes using transcripts and Gemini AI.
+An AI-powered Flask application that converts YouTube videos into clear and structured study notes using YouTube transcripts and Gemini AI.
 
 ## 🚀 Features
 
@@ -13,22 +13,29 @@ An AI-powered Flask application that converts YouTube videos into clear study no
 * Important key points
 * Concepts explained simply
 * Examples from the video
+* Quick revision notes
 * Revision and interview questions
 * MySQL database integration
 * Saved video history
 * Fetch notes for a specific video
 * Delete saved videos
 * Protected APIs using JWT
+* Responsive web frontend
 
 ## 🛠️ Technologies Used
+
+### Backend
 
 * Python
 * Flask
 * MySQL
-* JWT / PyJWT
+* PyJWT
 * Gemini AI
 * yt-dlp
 * YouTube Transcript API
+
+### Frontend
+
 * HTML
 * CSS
 * JavaScript
@@ -60,11 +67,19 @@ youtube-ai-notes/
 │   ├── ai_routes.py
 │   └── video_routes.py
 │
-└── services/
-    ├── __init__.py
-    ├── youtube_service.py
-    ├── transcript_service.py
-    └── ai_service.py
+├── services/
+│   ├── __init__.py
+│   ├── youtube_service.py
+│   ├── transcript_service.py
+│   └── ai_service.py
+│
+└── frontend/
+    ├── index.html
+    ├── register.html
+    ├── dashboard.html
+    ├── notes.html
+    ├── app.js
+    └── style.css
 ```
 
 ## ⚙️ Installation
@@ -84,7 +99,7 @@ python -m venv venv
 
 ### 3. Activate the virtual environment
 
-Windows PowerShell:
+#### Windows PowerShell
 
 ```powershell
 venv\Scripts\Activate.ps1
@@ -114,7 +129,7 @@ DB_NAME=youtube_ai_notes
 JWT_SECRET_KEY=your_jwt_secret_key
 
 GEMINI_API_KEY=your_gemini_api_key
-GEMINI_MODEL=gemini-3.6-flash
+GEMINI_MODEL=your_gemini_model
 ```
 
 **Never commit the real `.env` file or API keys to GitHub.**
@@ -133,7 +148,7 @@ Then execute:
 database/schema.sql
 ```
 
-The database contains:
+The database contains the following main tables:
 
 * `users`
 * `videos`
@@ -154,6 +169,8 @@ The application runs at:
 http://127.0.0.1:5000
 ```
 
+Open the application in your browser.
+
 ## 🔑 API Endpoints
 
 ### Authentication
@@ -168,9 +185,9 @@ Request:
 
 ```json
 {
-    "name": "Isha",
-    "email": "isha@example.com",
-    "password": "password123"
+    "name": "Your Name",
+    "email": "your@email.com",
+    "password": "your_password"
 }
 ```
 
@@ -184,8 +201,8 @@ Request:
 
 ```json
 {
-    "email": "isha@example.com",
-    "password": "password123"
+    "email": "your@email.com",
+    "password": "your_password"
 }
 ```
 
@@ -219,8 +236,10 @@ The API processes the YouTube video and generates:
 
 * Summary
 * Key points
+* Detailed notes
 * Concepts
 * Examples
+* Quick revision
 * Revision questions
 
 The generated data is saved in MySQL.
@@ -275,19 +294,19 @@ Header:
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-Deleting a video also deletes its related notes and revision questions because of database cascade relationships.
+Deletes the selected video and its related data according to the database relationship configuration.
 
 ## 🔒 Authentication
 
 The application uses JSON Web Tokens (JWT) to protect authenticated API endpoints.
 
-The client must send:
+Authenticated requests must include:
 
 ```text
 Authorization: Bearer <JWT_TOKEN>
 ```
 
-Requests with invalid or malformed tokens are rejected.
+Requests with missing, invalid, expired, or malformed tokens are rejected.
 
 ## 🧠 AI Processing Flow
 
@@ -307,6 +326,30 @@ Generate Revision Questions
 Save Data in MySQL
      ↓
 Return JSON Response
+     ↓
+Display Notes in Frontend
+```
+
+## 🖥️ Application Flow
+
+```text
+User
+ ↓
+Register / Login
+ ↓
+JWT Authentication
+ ↓
+Dashboard
+ ↓
+Enter YouTube URL
+ ↓
+Generate AI Notes
+ ↓
+View Structured Notes
+ ↓
+Save Video History
+ ↓
+View / Delete Saved Videos
 ```
 
 ## 🧪 API Testing
@@ -330,8 +373,6 @@ Tested scenarios include:
 
 ## 🔮 Future Improvements
 
-* HTML/CSS/JavaScript frontend
-* User dashboard
 * Search saved videos
 * Notes editing
 * Download notes as PDF
@@ -339,6 +380,8 @@ Tested scenarios include:
 * Better transcript language handling
 * Refresh token authentication
 * Pagination for saved videos
+* Improved AI personalization
+* Multiple language support
 
 ## 👩‍💻 Author
 
