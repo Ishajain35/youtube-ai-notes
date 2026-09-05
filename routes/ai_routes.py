@@ -1,14 +1,18 @@
 from flask import Blueprint, request, jsonify
+import json
+import re
 
 from services.youtube_service import (
     get_video_info,
     get_transcript
 )
 
-from services.ai_service import generate_notes
+from services.ai_service import (
+    generate_notes,
+    answer_question
+)
 
 from middleware.auth_middleware import token_required
-
 from database.db import get_db_connection
 
 
@@ -19,30 +23,158 @@ ai_bp = Blueprint(
 )
 
 
-@ai_bp.route("/notes", methods=["POST"])
+# =========================================================
+# HELPER: CONVERT SHORT NOTES INTO BULLET POINTS
+# =========================================================
+
+def format_short_notes(value):
+
+    if value is None:
+        return ""
+
+    # -----------------------------------------------------
+    # If AI already returned a list
+    # -----------------------------------------------------
+
+    if isinstance(value, list):
+
+        points = []
+
+        for item in value:
+
+            text = str(item).strip()
+
+            if text:
+
+                text = re.sub(
+                    r"^[•●▪◦\-*]+\s*",
+                    "",
+                    text
+                )
+
+                points.append(
+                    f"• {text}"
+                )
+
+        return "\n".join(points)
+
+
+    # -----------------------------------------------------
+    # If AI returned a string
+    # -----------------------------------------------------
+
+    text = str(value).strip()
+
+    if not text:
+        return ""
+
+
+    # -----------------------------------------------------
+    # Split existing lines
+    # -----------------------------------------------------
+
+    lines = [
+        line.strip()
+        for line in text.splitlines()
+        if line.strip()
+    ]
+
+
+    # Remove existing bullet symbols
+
+    cleaned_lines = []
+
+    for line in lines:
+
+        line = re.sub(
+            r"^[•●▪◦\-*]+\s*",
+            "",
+            line
+        ).strip()
+
+        if line:
+            cleaned_lines.append(line)
+
+
+    # -----------------------------------------------------
+    # If multiple lines already exist
+    # -----------------------------------------------------
+
+    if len(cleaned_lines) > 1:
+
+        return "\n".join(
+            f"• {line}"
+            for line in cleaned_lines
+        )
+
+
+    # -----------------------------------------------------
+    # If AI returned one large paragraph,
+    # split it into sentences
+    # -----------------------------------------------------
+
+    sentences = re.split(
+        r"(?<=[.!?])\s+",
+        text
+    )
+
+    sentences = [
+        sentence.strip()
+        for sentence in sentences
+        if sentence.strip()
+    ]
+
+
+    if len(sentences) > 1:
+
+        return "\n".join(
+            f"• {sentence}"
+            for sentence in sentences
+        )
+
+
+    # -----------------------------------------------------
+    # Single statement
+    # -----------------------------------------------------
+
+    return f"• {text}"
+
+
+# =========================================================
+# AI NOTES GENERATION
+# =========================================================
+
+@ai_bp.route(
+    "/notes",
+    methods=["POST"]
+)
 @token_required
 def generate_ai_notes():
 
-    data = request.get_json(silent=True)
+    data = request.get_json(
+        silent=True
+    )
 
-    # ======================================================
+
+    # =====================================================
     # 1. CHECK REQUEST
-    # ======================================================
+    # =====================================================
 
     if not data:
 
         return jsonify({
+
             "success": False,
-            "error": "Request body must contain valid JSON"
+
+            "error":
+                "Request body must contain valid JSON"
+
         }), 400
 
 
-    # ======================================================
+    # =====================================================
     # 2. GET YOUTUBE URL
-    # ======================================================
-
-    # Support both names:
-    # youtube_url and url
+    # =====================================================
 
     youtube_url = (
         data.get("youtube_url")
@@ -53,8 +185,12 @@ def generate_ai_notes():
     if not youtube_url:
 
         return jsonify({
+
             "success": False,
-            "error": "youtube_url is required"
+
+            "error":
+                "youtube_url is required"
+
         }), 400
 
 
@@ -64,13 +200,14 @@ def generate_ai_notes():
 
     try:
 
-        # ==================================================
+        # =================================================
         # 3. GET VIDEO INFORMATION
-        # ==================================================
+        # =================================================
 
         print(
             f"Getting video information for: {youtube_url}"
         )
+
 
         video_info = get_video_info(
             youtube_url
@@ -80,16 +217,23 @@ def generate_ai_notes():
         if not video_info:
 
             return jsonify({
+
                 "success": False,
-                "error": "Could not get YouTube video information"
+
+                "error":
+                    "Could not get YouTube video information"
+
             }), 400
 
 
-        # ==================================================
+        # =================================================
         # 4. GET TRANSCRIPT
-        # ==================================================
+        # =================================================
 
-        print("Getting transcript...")
+        print(
+            "Getting transcript..."
+        )
+
 
         transcript = get_transcript(
             youtube_url
@@ -99,19 +243,28 @@ def generate_ai_notes():
         if not transcript:
 
             return jsonify({
+
                 "success": False,
-                "error": "Transcript could not be found"
+
+                "error":
+                    "Transcript could not be found"
+
             }), 404
 
 
-        print("Transcript received successfully")
+        print(
+            "Transcript received successfully"
+        )
 
 
-        # ==================================================
+        # =================================================
         # 5. GENERATE AI NOTES
-        # ==================================================
+        # =================================================
 
-        print("Generating AI notes...")
+        print(
+            "Generating AI notes..."
+        )
+
 
         ai_result = generate_notes(
             transcript
@@ -121,29 +274,68 @@ def generate_ai_notes():
         if not ai_result:
 
             return jsonify({
+
                 "success": False,
-                "error": "AI could not generate notes"
+
+                "error":
+                    "AI could not generate notes"
+
             }), 500
 
 
-        print("AI notes generated successfully")
+        print(
+            "AI notes generated successfully"
+        )
 
 
-        # ==================================================
+        # =================================================
         # 6. GET AI DATA
-        # ==================================================
+        # =================================================
 
         title = ai_result.get(
             "title",
-            video_info.get("title", "")
+            video_info.get(
+                "title",
+                ""
+            )
         )
 
 
-        overview = ai_result.get(
-            "overview",
-            ""
+        # -------------------------------------------------
+        # SHORT NOTES
+        # -------------------------------------------------
+
+        short_notes = format_short_notes(
+            ai_result.get(
+                "short_notes",
+                ""
+            )
         )
 
+
+        # -------------------------------------------------
+        # KEY POINTS
+        # -------------------------------------------------
+
+        key_points = ai_result.get(
+            "key_points",
+            []
+        )
+
+
+        if not isinstance(
+            key_points,
+            list
+        ):
+
+            key_points = [
+                str(key_points)
+            ]
+
+
+        # -------------------------------------------------
+        # CONCEPTS
+        # -------------------------------------------------
 
         concepts = ai_result.get(
             "concepts",
@@ -151,11 +343,94 @@ def generate_ai_notes():
         )
 
 
-        important_concepts = ai_result.get(
-            "important_concepts",
+        if not isinstance(
+            concepts,
+            list
+        ):
+
+            concepts = []
+
+
+        # -------------------------------------------------
+        # CONCEPT FLOW
+        # -------------------------------------------------
+
+        concept_flow = ai_result.get(
+            "concept_flow",
             []
         )
 
+
+        if not isinstance(
+            concept_flow,
+            list
+        ):
+
+            concept_flow = []
+
+
+        # -------------------------------------------------
+        # MIND MAP
+        # -------------------------------------------------
+
+        mind_map = ai_result.get(
+            "mind_map",
+            {}
+        )
+
+
+        if not isinstance(
+            mind_map,
+            dict
+        ):
+
+            mind_map = {}
+
+
+        # -------------------------------------------------
+        # VISUALS
+        # -------------------------------------------------
+
+        visuals = ai_result.get(
+            "visuals",
+            []
+        )
+
+
+        if not isinstance(
+            visuals,
+            list
+        ):
+
+            visuals = []
+
+
+        print(
+            f"Visuals generated: {len(visuals)}"
+        )
+
+
+        # -------------------------------------------------
+        # PRACTICAL EXAMPLES
+        # -------------------------------------------------
+
+        practical_examples = ai_result.get(
+            "practical_examples",
+            []
+        )
+
+
+        if not isinstance(
+            practical_examples,
+            list
+        ):
+
+            practical_examples = []
+
+
+        # -------------------------------------------------
+        # QUICK REVISION
+        # -------------------------------------------------
 
         quick_revision = ai_result.get(
             "quick_revision",
@@ -163,15 +438,53 @@ def generate_ai_notes():
         )
 
 
-        revision_questions = ai_result.get(
-            "revision_questions",
+        if not isinstance(
+            quick_revision,
+            list
+        ):
+
+            quick_revision = []
+
+
+        # -------------------------------------------------
+        # INTERVIEW QUESTIONS
+        # -------------------------------------------------
+
+        interview_questions = ai_result.get(
+            "interview_questions",
             []
         )
 
 
-        # ==================================================
+        if not isinstance(
+            interview_questions,
+            list
+        ):
+
+            interview_questions = []
+
+
+        # -------------------------------------------------
+        # CROSS QUESTIONS
+        # -------------------------------------------------
+
+        cross_questions = ai_result.get(
+            "cross_questions",
+            []
+        )
+
+
+        if not isinstance(
+            cross_questions,
+            list
+        ):
+
+            cross_questions = []
+
+
+        # =================================================
         # 7. DATABASE CONNECTION
-        # ==================================================
+        # =================================================
 
         connection = get_db_connection()
 
@@ -180,9 +493,9 @@ def generate_ai_notes():
         user_id = request.user_id
 
 
-        # ==================================================
+        # =================================================
         # 8. SAVE VIDEO
-        # ==================================================
+        # =================================================
 
         cursor.execute(
             """
@@ -197,9 +510,16 @@ def generate_ai_notes():
             """,
             (
                 user_id,
+
                 youtube_url,
-                video_info.get("title"),
-                video_info.get("thumbnail")
+
+                video_info.get(
+                    "title"
+                ),
+
+                video_info.get(
+                    "thumbnail"
+                )
             )
         )
 
@@ -207,249 +527,65 @@ def generate_ai_notes():
         video_id = cursor.lastrowid
 
 
-        # ==================================================
-        # 9. BUILD DETAILED NOTES
-        # ==================================================
+        # =================================================
+        # 9. PREPARE STRUCTURED NOTES
+        # =================================================
 
-        detailed_notes_parts = []
+        structured_notes = {
 
-
-        # --------------------------------------------------
-        # TITLE
-        # --------------------------------------------------
-
-        if title:
-
-            detailed_notes_parts.append(
-                f"TOPIC\n\n{title}"
-            )
-
-
-        # --------------------------------------------------
-        # OVERVIEW
-        # --------------------------------------------------
-
-        if overview:
-
-            detailed_notes_parts.append(
-                f"OVERVIEW\n\n{overview}"
-            )
-
-
-        # --------------------------------------------------
-        # IMPORTANT CONCEPTS
-        # --------------------------------------------------
-
-        if important_concepts:
-
-            important_text = "\n".join(
-                f"- {concept}"
-                for concept in important_concepts
-            )
-
-
-            detailed_notes_parts.append(
-                "IMPORTANT CONCEPTS\n\n"
-                + important_text
-            )
-
-
-        # --------------------------------------------------
-        # DETAILED CONCEPTS
-        # --------------------------------------------------
-
-        if concepts:
-
-            concept_sections = []
-
-
-            for index, concept in enumerate(
+            "concepts":
                 concepts,
-                start=1
-            ):
 
-                if not isinstance(
-                    concept,
-                    dict
-                ):
-                    continue
+            "concept_flow":
+                concept_flow,
 
+            "mind_map":
+                mind_map,
 
-                name = concept.get(
-                    "name",
-                    ""
-                )
+            "practical_examples":
+                practical_examples,
 
+            "quick_revision":
+                quick_revision,
 
-                explanation = concept.get(
-                    "explanation",
-                    ""
-                )
+            "interview_questions":
+                interview_questions,
 
+            "cross_questions":
+                cross_questions
 
-                how_it_works = concept.get(
-                    "how_it_works",
-                    []
-                )
+        }
 
 
-                example = concept.get(
-                    "example",
-                    ""
-                )
-
-
-                practical_example = concept.get(
-                    "practical_example",
-                    ""
-                )
-
-
-                important_points = concept.get(
-                    "important_points",
-                    []
-                )
-
-
-                common_mistakes = concept.get(
-                    "common_mistakes",
-                    []
-                )
-
-
-                section = []
-
-
-                if name:
-
-                    section.append(
-                        f"{index}. {name}"
-                    )
-
-
-                if explanation:
-
-                    section.append(
-                        f"EXPLANATION\n{explanation}"
-                    )
-
-
-                if how_it_works:
-
-                    steps = "\n".join(
-                        f"{i}. {step}"
-                        for i, step in enumerate(
-                            how_it_works,
-                            start=1
-                        )
-                    )
-
-
-                    section.append(
-                        f"HOW IT WORKS\n{steps}"
-                    )
-
-
-                if example:
-
-                    section.append(
-                        f"EXAMPLE\n{example}"
-                    )
-
-
-                if practical_example:
-
-                    section.append(
-                        "PRACTICAL EXAMPLE\n"
-                        + practical_example
-                    )
-
-
-                if important_points:
-
-                    points = "\n".join(
-                        f"- {point}"
-                        for point in important_points
-                    )
-
-
-                    section.append(
-                        "IMPORTANT POINTS\n"
-                        + points
-                    )
-
-
-                if common_mistakes:
-
-                    mistakes = "\n".join(
-                        f"- {mistake}"
-                        for mistake in common_mistakes
-                    )
-
-
-                    section.append(
-                        "COMMON MISTAKES\n"
-                        + mistakes
-                    )
-
-
-                if section:
-
-                    concept_sections.append(
-                        "\n\n".join(section)
-                    )
-
-
-            if concept_sections:
-
-                detailed_notes_parts.append(
-                    "DETAILED CONCEPTS\n\n"
-                    +
-                    "\n\n".join(
-                        concept_sections
-                    )
-                )
-
-
-        # --------------------------------------------------
-        # QUICK REVISION
-        # --------------------------------------------------
-
-        if quick_revision:
-
-            revision_text = "\n".join(
-                f"- {point}"
-                for point in quick_revision
-            )
-
-
-            detailed_notes_parts.append(
-                "QUICK REVISION\n\n"
-                + revision_text
-            )
-
-
-        detailed_notes = "\n\n".join(
-            detailed_notes_parts
+        detailed_notes = json.dumps(
+            structured_notes,
+            ensure_ascii=False
         )
 
 
-        # ==================================================
-        # 10. KEY POINTS
-        # ==================================================
+        # =================================================
+        # 10. PREPARE KEY POINTS
+        # =================================================
 
-        key_points = "\n".join(
-            f"- {point}"
-            for point in (
-                important_concepts
-                or quick_revision
-            )
+        key_points_text = json.dumps(
+            key_points,
+            ensure_ascii=False
         )
 
 
-        # ==================================================
-        # 11. SAVE NOTES
-        # ==================================================
+        # =================================================
+        # 11. PREPARE VISUALS
+        # =================================================
+
+        visual_notes_text = json.dumps(
+            visuals,
+            ensure_ascii=False
+        )
+
+
+        # =================================================
+        # 12. SAVE NOTES
+        # =================================================
 
         cursor.execute(
             """
@@ -458,15 +594,21 @@ def generate_ai_notes():
                 video_id,
                 summary,
                 detailed_notes,
-                key_points
+                key_points,
+                visual_notes
             )
-            VALUES (%s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s)
             """,
             (
                 video_id,
-                overview,
+
+                short_notes,
+
                 detailed_notes,
-                key_points
+
+                key_points_text,
+
+                visual_notes_text
             )
         )
 
@@ -474,110 +616,9 @@ def generate_ai_notes():
         notes_id = cursor.lastrowid
 
 
-        # ==================================================
-        # 12. SAVE REVISION QUESTIONS
-        # ==================================================
-
-        for question in revision_questions:
-
-            question_text = ""
-            answer = ""
-            question_type = "conceptual"
-
-
-            if isinstance(
-                question,
-                dict
-            ):
-
-                question_text = str(
-                    question.get(
-                        "question",
-                        ""
-                    )
-                ).strip()
-
-
-                answer = str(
-                    question.get(
-                        "answer",
-                        ""
-                    )
-                ).strip()
-
-
-                # AI uses "type"
-                question_type = str(
-                    question.get(
-                        "type",
-                        question.get(
-                            "question_type",
-                            "conceptual"
-                        )
-                    )
-                ).strip().lower()
-
-
-            elif isinstance(
-                question,
-                str
-            ):
-
-                question_text = (
-                    question.strip()
-                )
-
-
-                answer = ""
-
-
-            # ------------------------------------------------
-            # VALIDATE TYPE
-            # ------------------------------------------------
-
-            if question_type not in [
-                "conceptual",
-                "practical"
-            ]:
-
-                question_type = "conceptual"
-
-
-            # ------------------------------------------------
-            # SKIP EMPTY QUESTION
-            # ------------------------------------------------
-
-            if not question_text:
-                continue
-
-
-            # ------------------------------------------------
-            # SAVE QUESTION
-            # ------------------------------------------------
-
-            cursor.execute(
-                """
-                INSERT INTO revision_questions
-                (
-                    notes_id,
-                    question,
-                    answer,
-                    question_type
-                )
-                VALUES (%s, %s, %s, %s)
-                """,
-                (
-                    notes_id,
-                    question_text,
-                    answer,
-                    question_type
-                )
-            )
-
-
-        # ==================================================
+        # =================================================
         # 13. COMMIT
-        # ==================================================
+        # =================================================
 
         connection.commit()
 
@@ -587,19 +628,27 @@ def generate_ai_notes():
         )
 
 
-        # ==================================================
+        print(
+            f"Visual notes saved: {len(visuals)}"
+        )
+
+
+        # =================================================
         # 14. RESPONSE
-        # ==================================================
+        # =================================================
 
         return jsonify({
 
             "success": True,
 
             "message":
-                "Notes and revision questions saved successfully",
+                "AI learning notes generated successfully",
 
             "video_id":
                 video_id,
+
+            "notes_id":
+                notes_id,
 
             "video":
                 video_info,
@@ -609,62 +658,55 @@ def generate_ai_notes():
                 "title":
                     title,
 
-                "summary":
-                    overview,
-
-                "overview":
-                    overview,
+                "short_notes":
+                    short_notes,
 
                 "key_points":
-                    (
-                        important_concepts
-                        or quick_revision
-                    ),
-
-                "important_concepts":
-                    important_concepts,
+                    key_points,
 
                 "concepts":
                     concepts,
 
-                "examples":
-                    [
-                        concept.get("example")
-                        for concept in concepts
-                        if isinstance(
-                            concept,
-                            dict
-                        )
-                        and concept.get("example")
-                    ],
+                "concept_flow":
+                    concept_flow,
+
+                "mind_map":
+                    mind_map,
+
+                "visuals":
+                    visuals,
+
+                "practical_examples":
+                    practical_examples,
 
                 "quick_revision":
                     quick_revision,
 
-                "detailed_notes":
-                    detailed_notes
-            },
+                "interview_questions":
+                    interview_questions,
 
-            "revision_questions":
-                revision_questions
+                "cross_questions":
+                    cross_questions
+
+            }
 
         }), 200
 
 
-    # ======================================================
+    # =====================================================
     # ERROR HANDLING
-    # ======================================================
+    # =====================================================
 
     except Exception as e:
 
         if connection:
-
             connection.rollback()
 
 
         print(
             "ERROR generating notes:"
         )
+
 
         print(
             str(e)
@@ -684,17 +726,302 @@ def generate_ai_notes():
         }), 500
 
 
-    # ======================================================
+    # =====================================================
     # CLEANUP
-    # ======================================================
+    # =====================================================
 
     finally:
 
         if cursor:
-
             cursor.close()
 
 
         if connection:
+            connection.close()
 
+
+# =========================================================
+# ASK QUESTION ABOUT VIDEO
+# =========================================================
+
+@ai_bp.route(
+    "/ask",
+    methods=["POST"]
+)
+@token_required
+def ask_video_question():
+
+    data = request.get_json(
+        silent=True
+    )
+
+
+    # =====================================================
+    # 1. CHECK REQUEST
+    # =====================================================
+
+    if not data:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Request body must contain valid JSON"
+
+        }), 400
+
+
+    # =====================================================
+    # 2. GET DATA
+    # =====================================================
+
+    video_id = data.get(
+        "video_id"
+    )
+
+
+    question = data.get(
+        "question"
+    )
+
+
+    # =====================================================
+    # 3. VALIDATE VIDEO ID
+    # =====================================================
+
+    try:
+
+        video_id = int(
+            video_id
+        )
+
+    except (
+        TypeError,
+        ValueError
+    ):
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Valid video_id is required"
+
+        }), 400
+
+
+    # =====================================================
+    # 4. VALIDATE QUESTION
+    # =====================================================
+
+    if not question or not str(
+        question
+    ).strip():
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Question is required"
+
+        }), 400
+
+
+    question = str(
+        question
+    ).strip()
+
+
+    if len(question) > 1000:
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Question must be 1000 characters or less"
+
+        }), 400
+
+
+    connection = None
+    cursor = None
+
+
+    try:
+
+        # =================================================
+        # 5. DATABASE CONNECTION
+        # =================================================
+
+        connection = get_db_connection()
+
+        cursor = connection.cursor()
+
+
+        # =================================================
+        # 6. FIND USER'S VIDEO
+        # =================================================
+
+        cursor.execute(
+            """
+            SELECT
+                youtube_url,
+                video_title
+            FROM videos
+            WHERE
+                id = %s
+                AND user_id = %s
+            LIMIT 1
+            """,
+            (
+                video_id,
+                request.user_id
+            )
+        )
+
+
+        video = cursor.fetchone()
+
+
+        if not video:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Video not found"
+
+            }), 404
+
+
+        youtube_url = video[0]
+
+
+        # =================================================
+        # 7. GET TRANSCRIPT
+        # =================================================
+
+        print(
+            "Getting transcript for question..."
+        )
+
+
+        transcript = get_transcript(
+            youtube_url
+        )
+
+
+        if not transcript:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Transcript could not be found for this video"
+
+            }), 404
+
+
+        print(
+            "Transcript received for question"
+        )
+
+
+        # =================================================
+        # 8. ASK AI
+        # =================================================
+
+        print(
+            "Generating AI answer..."
+        )
+
+
+        answer = answer_question(
+            transcript,
+            question
+        )
+
+
+        if not answer:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "AI could not answer the question"
+
+            }), 500
+
+
+        print(
+            "AI answer generated successfully"
+        )
+
+
+        # =================================================
+        # 9. RETURN ANSWER
+        # =================================================
+
+        return jsonify({
+
+            "success": True,
+
+            "video_id":
+                video_id,
+
+            "question":
+                question,
+
+            "answer":
+                answer
+
+        }), 200
+
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
+
+    except Exception as e:
+
+        print(
+            "ERROR answering question:"
+        )
+
+
+        print(
+            str(e)
+        )
+
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                "Something went wrong while answering the question",
+
+            "details":
+                str(e)
+
+        }), 500
+
+
+    # =====================================================
+    # CLEANUP
+    # =====================================================
+
+    finally:
+
+        if cursor:
+            cursor.close()
+
+
+        if connection:
             connection.close()

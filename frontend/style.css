@@ -1,1202 +1,927 @@
-/* ============================================================
-   GLOBAL
-============================================================ */
+
+/* =========================================================
+   YouTube AI Notes - COMPLETE DASHBOARD STYLE
+========================================================= */
+
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
-
 
 html {
     scroll-behavior: smooth;
 }
 
-
 body {
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
+    font-family: Arial, Helvetica, sans-serif;
     background: #f5f7fb;
-
     color: #1f2937;
-
-    line-height: 1.6;
+    min-height: 100vh;
 }
 
 
-/* ============================================================
-   DASHBOARD
-============================================================ */
+/* =========================================================
+   HEADER
+========================================================= */
 
 .dashboard-header {
     width: 100%;
+    min-height: 78px;
 
-    padding: 20px 6%;
+    padding: 14px 6%;
 
     background: #ffffff;
 
     border-bottom: 1px solid #e5e7eb;
 
     display: flex;
-
+    align-items: center;
     justify-content: space-between;
 
-    align-items: center;
-
-    gap: 20px;
-
     position: sticky;
-
     top: 0;
-
     z-index: 100;
+
+    box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
 }
 
+
+/* =========================================================
+   BRAND
+========================================================= */
 
 .brand {
     display: flex;
-
     align-items: center;
-
     gap: 13px;
 }
 
-
 .brand-icon {
-    width: 44px;
-
-    height: 44px;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
+    width: 43px;
+    height: 43px;
 
     border-radius: 12px;
 
-    background: #111827;
+    background: linear-gradient(135deg, #ef4444, #dc2626);
 
     color: #ffffff;
 
-    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 19px;
+    font-weight: 700;
+
+    box-shadow: 0 5px 14px rgba(220, 38, 38, 0.22);
 }
 
-
-.dashboard-header h1 {
-    font-size: 23px;
-
+.brand h1 {
+    font-size: 20px;
     line-height: 1.2;
 
-    margin-bottom: 3px;
+    color: #111827;
+
+    font-weight: 750;
 }
 
-
-.dashboard-header p {
-    color: #6b7280;
-
-    font-size: 13px;
-}
-
-
-/* ============================================================
-   LOGOUT
-============================================================ */
-
-.logout-button {
-    border: 1px solid #e5e7eb;
-
-    background: #ffffff;
-
-    color: #374151;
-
-    padding: 10px 18px;
-
-    border-radius: 9px;
-
-    cursor: pointer;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-
-.logout-button:hover {
-    background: #111827;
-
-    color: #ffffff;
-
-    transform: translateY(-1px);
-}
-
-
-/* ============================================================
-   DASHBOARD MAIN
-============================================================ */
-
-.dashboard-container {
-    width: min(1150px, 92%);
-
-    margin: 35px auto 60px;
-}
-
-
-/* ============================================================
-   GENERATE SECTION
-============================================================ */
-
-.generate-section {
-    background: #ffffff;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 22px;
-
-    padding: 48px;
-
-    box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.05);
-
-    text-align: center;
-
-    margin-bottom: 38px;
-}
-
-
-.hero-content {
-    max-width: 720px;
-
-    margin: 0 auto 30px;
-}
-
-
-.hero-badge {
-    display: inline-block;
-
-    padding: 6px 12px;
-
-    border-radius: 20px;
-
-    background: #f3f4f6;
-
-    color: #374151;
+.brand p {
+    margin-top: 3px;
 
     font-size: 12px;
 
+    color: #6b7280;
+}
+
+
+/* =========================================================
+   LOGOUT BUTTON
+========================================================= */
+
+.logout-button {
+    padding: 9px 17px;
+
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #374151;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #fecaca;
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.dashboard-container {
+    width: 100%;
+    max-width: 1180px;
+
+    margin: 0 auto;
+
+    padding: 38px 24px 55px;
+}
+
+
+/* =========================================================
+   GENERATE SECTION
+========================================================= */
+
+.generate-section {
+    width: 100%;
+
+    padding: 45px 45px 42px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff 0%,
+            #f8faff 52%,
+            #ffffff 100%
+        );
+
+    border: 1px solid #e0e7ff;
+
+    box-shadow: 0 10px 30px rgba(79, 70, 229, 0.07);
+
+    margin-bottom: 45px;
+}
+
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.hero-content {
+    max-width: 760px;
+
+    margin: 0 auto;
+
+    text-align: center;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+
+    padding: 7px 13px;
+
+    border-radius: 30px;
+
+    background: #ffffff;
+
+    border: 1px solid #e0e7ff;
+
+    color: #4f46e5;
+
+    font-size: 12px;
     font-weight: 700;
 
-    margin-bottom: 15px;
+    margin-bottom: 17px;
+
+    box-shadow: 0 3px 10px rgba(79, 70, 229, 0.06);
 }
 
-
-.generate-section h2 {
+.hero-content h2 {
     font-size: 36px;
 
-    line-height: 1.2;
+    line-height: 1.15;
 
-    margin-bottom: 15px;
+    color: #111827;
+
+    font-weight: 800;
+
+    letter-spacing: -0.8px;
 }
 
-
-.generate-section h2 span {
+.hero-content h2 span {
     color: #4f46e5;
 }
 
-
 .hero-content p {
+    max-width: 690px;
+
+    margin: 17px auto 28px;
+
     color: #6b7280;
 
     font-size: 15px;
 
-    line-height: 1.8;
+    line-height: 1.7;
 }
 
 
-/* ============================================================
-   URL FORM
-============================================================ */
+/* =========================================================
+   NOTES FORM
+========================================================= */
 
 #notesForm {
+    width: 100%;
     max-width: 850px;
 
     margin: 0 auto;
 
     display: flex;
+    align-items: stretch;
 
-    gap: 12px;
-
-    align-items: center;
+    gap: 11px;
 }
 
+
+/* =========================================================
+   URL INPUT WRAPPER
+========================================================= */
 
 .url-input-wrapper {
     flex: 1;
 
+    min-width: 0;
+
+    height: 54px;
+
     position: relative;
 
     display: flex;
-
     align-items: center;
 }
-
 
 .url-icon {
     position: absolute;
 
-    left: 15px;
+    left: 17px;
 
     font-size: 17px;
+
+    pointer-events: none;
 }
 
-
-#youtubeUrl {
+.url-input-wrapper input {
     width: 100%;
+    height: 100%;
 
-    height: 52px;
+    padding: 0 18px 0 48px;
 
     border: 1px solid #d1d5db;
 
-    border-radius: 10px;
+    border-radius: 11px;
 
-    padding: 0 16px 0 44px;
+    background: #ffffff;
+
+    color: #111827;
 
     font-size: 14px;
 
     outline: none;
 
-    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.05);
 
     transition:
-        border 0.2s ease,
+        border-color 0.2s ease,
         box-shadow 0.2s ease;
 }
 
+.url-input-wrapper input::placeholder {
+    color: #9ca3af;
+}
 
-#youtubeUrl:focus {
+.url-input-wrapper input:focus {
     border-color: #6366f1;
 
     box-shadow:
-        0 0 0 3px rgba(99, 102, 241, 0.1);
+        0 0 0 3px rgba(99, 102, 241, 0.12),
+        0 4px 12px rgba(15, 23, 42, 0.05);
 }
 
 
+/* =========================================================
+   GENERATE BUTTON
+========================================================= */
+
 .generate-button {
-    height: 52px;
+    height: 54px;
 
     padding: 0 21px;
 
     border: none;
 
-    border-radius: 10px;
+    border-radius: 11px;
 
-    background: #111827;
+    background: linear-gradient(
+        135deg,
+        #4f46e5,
+        #6366f1
+    );
 
     color: #ffffff;
 
-    cursor: pointer;
-
     display: flex;
-
     align-items: center;
+    justify-content: center;
 
-    gap: 12px;
-
-    font-size: 14px;
-
-    font-weight: 700;
+    gap: 10px;
 
     white-space: nowrap;
 
+    font-size: 14px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow: 0 7px 18px rgba(79, 70, 229, 0.22);
+
     transition:
         transform 0.2s ease,
-        opacity 0.2s ease;
+        box-shadow 0.2s ease,
+        background 0.2s ease;
 }
-
 
 .generate-button:hover {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 
-    opacity: 0.92;
+    box-shadow: 0 10px 23px rgba(79, 70, 229, 0.28);
+
+    background: linear-gradient(
+        135deg,
+        #4338ca,
+        #4f46e5
+    );
 }
 
+.generate-button:active {
+    transform: translateY(0);
+}
 
 .generate-button:disabled {
-    cursor: not-allowed;
+    opacity: 0.65;
 
-    opacity: 0.6;
+    cursor: not-allowed;
 
     transform: none;
 }
 
 
-/* ============================================================
+/* =========================================================
    DASHBOARD MESSAGE
-============================================================ */
+========================================================= */
 
 .dashboard-message {
-    margin-top: 16px;
+    min-height: 20px;
+
+    margin-top: 15px;
+
+    text-align: center;
+
+    font-size: 13px;
 
     color: #6b7280;
-
-    font-size: 14px;
-
-    min-height: 20px;
 }
 
 
-/* ============================================================
-   VIDEOS SECTION
-============================================================ */
+/* =========================================================
+   SAVED VIDEOS SECTION
+========================================================= */
 
 .videos-section {
-    background: transparent;
+    width: 100%;
 }
 
 
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
 .section-header {
+    width: 100%;
+
+    margin-bottom: 21px;
+
     display: flex;
-
     align-items: flex-end;
-
     justify-content: space-between;
 
     gap: 20px;
-
-    margin-bottom: 22px;
 }
-
 
 .section-label {
     display: block;
+
+    margin-bottom: 6px;
+
+    color: #4f46e5;
 
     font-size: 11px;
 
     font-weight: 800;
 
-    letter-spacing: 1px;
-
-    color: #6b7280;
-
-    margin-bottom: 5px;
+    letter-spacing: 1.3px;
 }
-
 
 .section-header h2 {
     font-size: 27px;
 
     line-height: 1.2;
 
-    margin-bottom: 4px;
-}
+    color: #111827;
 
+    font-weight: 800;
+}
 
 .section-header p {
+    margin-top: 5px;
+
     color: #6b7280;
 
-    font-size: 14px;
+    font-size: 13px;
 }
 
 
+/* =========================================================
+   REFRESH BUTTON
+========================================================= */
+
 .refresh-button {
-    border: 1px solid #d1d5db;
+    padding: 9px 15px;
+
+    border: 1px solid #dbe0e8;
+
+    border-radius: 9px;
 
     background: #ffffff;
 
     color: #374151;
 
-    padding: 9px 15px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
     font-size: 13px;
 
     font-weight: 600;
 
-    transition:
-        background 0.2s ease,
-        transform 0.2s ease;
-}
+    cursor: pointer;
 
+    white-space: nowrap;
+
+    transition: all 0.2s ease;
+}
 
 .refresh-button:hover {
-    background: #f9fafb;
+    background: #f8fafc;
 
-    transform: translateY(-1px);
+    border-color: #c7d2fe;
+
+    color: #4f46e5;
 }
 
 
-/* ============================================================
-   VIDEO GRID
-============================================================ */
+/* =========================================================
+   VIDEOS GRID
+========================================================= */
+
+#videosContainer {
+    width: 100%;
+}
 
 .videos-grid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(3, minmax(0, 1fr));
-
-    gap: 22px;
-}
-
-
-/* ============================================================
-   VIDEO CARD
-============================================================ */
-
-.video-card {
-    background: #ffffff;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 15px;
-
-    overflow: hidden;
-
-    box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.04);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.video-card:hover {
-    transform: translateY(-4px);
-
-    box-shadow:
-        0 12px 28px rgba(0, 0, 0, 0.08);
-}
-
-
-.video-card img {
     width: 100%;
-
-    height: 185px;
-
-    object-fit: cover;
-
-    display: block;
-
-    background: #e5e7eb;
-}
-
-
-.video-card-content {
-    padding: 18px;
-}
-
-
-.video-card h3 {
-    font-size: 17px;
-
-    line-height: 1.45;
-
-    margin-bottom: 8px;
-
-    color: #111827;
-}
-
-
-.video-date {
-    color: #6b7280;
-
-    font-size: 12px;
-
-    margin-bottom: 15px;
-}
-
-
-.view-notes-btn,
-.video-card button {
-    border: none;
-
-    background: #111827;
-
-    color: #ffffff;
-
-    padding: 10px 15px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-size: 13px;
-
-    font-weight: 600;
-
-    width: 100%;
-
-    transition: opacity 0.2s ease;
-}
-
-
-.view-notes-btn:hover,
-.video-card button:hover {
-    opacity: 0.88;
-}
-
-
-/* ============================================================
-   LOADING
-============================================================ */
-
-.loading-card {
-    grid-column: 1 / -1;
-
-    min-height: 220px;
-
-    background: #ffffff;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 15px;
 
     display: flex;
+    flex-direction: column;
 
+    gap: 0;
+}
+
+
+/* =========================================================
+   LOADING CARD
+========================================================= */
+
+.loading-card {
+    width: 100%;
+
+    min-height: 145px;
+
+    padding: 30px;
+
+    background: #ffffff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    display: flex;
     flex-direction: column;
 
     align-items: center;
-
     justify-content: center;
 
     gap: 12px;
 
     color: #6b7280;
+
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+.loading-card p {
+    font-size: 13px;
 }
 
 
-.spinner {
-    width: 32px;
+/* =========================================================
+   SPINNER
+========================================================= */
 
-    height: 32px;
+.spinner {
+    width: 27px;
+    height: 27px;
 
     border: 3px solid #e5e7eb;
 
-    border-top-color: #111827;
+    border-top-color: #4f46e5;
 
     border-radius: 50%;
 
     animation: spin 0.8s linear infinite;
 }
 
-
 @keyframes spin {
-
     to {
         transform: rotate(360deg);
     }
-
 }
 
 
-/* ============================================================
-   EMPTY / ERROR
-============================================================ */
+/* =========================================================
+   SAVED VIDEO - COMPACT CARD
+========================================================= */
 
-.empty-message,
-.error-message {
-    grid-column: 1 / -1;
+.video-card {
+    width: 100% !important;
+    min-height: 0 !important;
 
-    text-align: center;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
 
-    padding: 45px 20px;
+    gap: 18px !important;
 
-    background: #ffffff;
+    padding: 14px !important;
+    margin: 0 0 14px 0 !important;
 
-    border: 1px solid #e5e7eb;
+    background: #ffffff !important;
 
-    border-radius: 15px;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 14px !important;
 
-    color: #6b7280;
-}
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06) !important;
 
-
-/* ============================================================
-   FOOTER
-============================================================ */
-
-.dashboard-footer {
-    text-align: center;
-
-    padding: 25px;
-
-    color: #9ca3af;
-
-    font-size: 12px;
-
-    border-top: 1px solid #e5e7eb;
-
-    background: #ffffff;
-}
-
-
-/* ============================================================
-   NOTES PAGE
-============================================================ */
-
-.notes-page {
-    min-height: 100vh;
-}
-
-
-/* ============================================================
-   NOTES HEADER
-============================================================ */
-
-.notes-header {
-    width: 100%;
-
-    padding: 22px 6%;
-
-    background: #ffffff;
-
-    border-bottom: 1px solid #e5e7eb;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 20px;
-
-    position: sticky;
-
-    top: 0;
-
-    z-index: 100;
-}
-
-
-.notes-header h1 {
-    font-size: 28px;
-
-    margin-bottom: 2px;
-}
-
-
-.notes-header p {
-    color: #6b7280;
-
-    font-size: 14px;
-}
-
-
-/* ============================================================
-   BACK BUTTON
-============================================================ */
-
-.back-btn {
-    border: none;
-
-    background: #111827;
-
-    color: white;
-
-    padding: 11px 18px;
-
-    border-radius: 8px;
-
-    cursor: pointer;
-
-    font-size: 14px;
+    box-sizing: border-box !important;
 
     transition:
         transform 0.2s ease,
-        opacity 0.2s ease;
+        box-shadow 0.2s ease !important;
 }
 
-
-.back-btn:hover {
-    transform: translateY(-1px);
-
-    opacity: 0.9;
-}
-
-
-/* ============================================================
-   NOTES CONTAINER
-============================================================ */
-
-.notes-container {
-    width: min(1100px, 92%);
-
-    margin: 35px auto 70px;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 24px;
-}
-
-
-/* ============================================================
-   VIDEO INFO
-============================================================ */
-
-.video-info-card {
-    background: #ffffff;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 16px;
-
-    padding: 20px;
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 22px;
+.video-card:hover {
+    transform: translateY(-2px) !important;
 
     box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.05);
+        0 8px 22px rgba(15, 23, 42, 0.10) !important;
 }
 
 
-.video-thumbnail {
-    width: 230px;
+/* =========================================================
+   VIDEO THUMBNAIL
+========================================================= */
 
-    height: 130px;
+.video-card-thumbnail {
+    width: 170px !important;
+    height: 100px !important;
 
-    object-fit: cover;
+    min-width: 170px !important;
+    max-width: 170px !important;
 
-    border-radius: 10px;
+    object-fit: cover !important;
 
-    background: #e5e7eb;
+    display: block !important;
+
+    border-radius: 10px !important;
+
+    background: #f1f5f9 !important;
 }
 
 
-.video-info {
-    flex: 1;
+/* =========================================================
+   VIDEO CONTENT
+========================================================= */
+
+.video-card-content {
+    flex: 1 !important;
+
+    min-width: 0 !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    justify-content: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 
-.video-info h2 {
-    font-size: 24px;
+/* =========================================================
+   VIDEO TITLE
+========================================================= */
 
-    line-height: 1.3;
+.video-card-content h3 {
+    margin: 0 0 6px 0 !important;
 
-    margin-bottom: 8px;
+    font-size: 17px !important;
+
+    line-height: 1.35 !important;
+
+    font-weight: 700 !important;
+
+    color: #111827 !important;
+
+    display: -webkit-box !important;
+
+    -webkit-line-clamp: 2 !important;
+
+    -webkit-box-orient: vertical !important;
+
+    overflow: hidden !important;
 }
 
 
-.video-info p {
-    color: #6b7280;
+/* =========================================================
+   VIDEO DATE
+========================================================= */
 
-    font-size: 14px;
+.video-card-content .video-date {
+    margin: 0 0 11px 0 !important;
+
+    font-size: 13px !important;
+
+    line-height: 1.4 !important;
+
+    color: #6b7280 !important;
 }
 
 
-/* ============================================================
-   NOTES MESSAGE
-============================================================ */
+/* =========================================================
+   BUTTON AREA
+========================================================= */
 
-.notes-message {
-    padding: 14px 18px;
+.video-card-actions {
+    display: flex !important;
+
+    align-items: center !important;
+
+    gap: 8px !important;
+
+    margin: 0 !important;
+}
+
+
+/* =========================================================
+   VIEW NOTES
+========================================================= */
+
+.video-card-actions .view-notes-btn {
+    padding: 8px 14px !important;
+
+    border: none !important;
+
+    border-radius: 8px !important;
+
+    background: #4f46e5 !important;
+
+    color: #ffffff !important;
+
+    font-size: 13px !important;
+
+    font-weight: 600 !important;
+
+    cursor: pointer !important;
+
+    transition: all 0.2s ease !important;
+}
+
+.video-card-actions .view-notes-btn:hover {
+    background: #4338ca !important;
+
+    transform: translateY(-1px) !important;
+}
+
+
+/* =========================================================
+   DELETE VIDEO
+========================================================= */
+
+.video-card-actions .delete-video-btn {
+    padding: 8px 14px !important;
+
+    border: 1px solid #fecaca !important;
+
+    border-radius: 8px !important;
+
+    background: #ffffff !important;
+
+    color: #dc2626 !important;
+
+    font-size: 13px !important;
+
+    font-weight: 600 !important;
+
+    cursor: pointer !important;
+
+    transition: all 0.2s ease !important;
+}
+
+.video-card-actions .delete-video-btn:hover {
+    background: #fef2f2 !important;
+
+    border-color: #fca5a5 !important;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state {
+    width: 100%;
+
+    padding: 45px 25px;
 
     background: #ffffff;
 
-    border: 1px solid #e5e7eb;
-
-    border-radius: 10px;
-
-    color: #4b5563;
-
-    text-align: center;
-}
-
-
-/* ============================================================
-   NOTES CARDS
-============================================================ */
-
-.notes-card {
-    background: #ffffff;
-
-    border: 1px solid #e5e7eb;
-
-    border-radius: 16px;
-
-    padding: 28px;
-
-    box-shadow:
-        0 5px 20px rgba(0, 0, 0, 0.04);
-}
-
-
-.card-heading {
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    margin-bottom: 20px;
-
-    padding-bottom: 14px;
-
-    border-bottom: 1px solid #e5e7eb;
-}
-
-
-.card-heading h2 {
-    font-size: 22px;
-}
-
-
-.card-icon {
-    font-size: 24px;
-}
-
-
-.summary-content {
-    font-size: 16px;
-
-    line-height: 1.8;
-
-    color: #374151;
-}
-
-
-/* ============================================================
-   LISTS
-============================================================ */
-
-#keyPoints ul,
-#quickRevision ul {
-    padding-left: 24px;
-}
-
-
-#keyPoints li,
-#quickRevision li {
-    margin-bottom: 10px;
-
-    line-height: 1.7;
-}
-
-
-.concept-section ul {
-    padding-left: 22px;
-}
-
-
-.concept-section li {
-    margin-bottom: 7px;
-
-    color: #4b5563;
-
-    line-height: 1.65;
-}
-
-
-/* ============================================================
-   DETAILED NOTES
-============================================================ */
-
-.detailed-intro {
-    color: #6b7280;
-
-    margin-bottom: 5px;
-}
-
-
-.raw-notes {
-    white-space: pre-wrap;
-
-    line-height: 1.8;
-
-    color: #374151;
-}
-
-
-#detailedNotes p {
-    margin-bottom: 12px;
-
-    color: #4b5563;
-
-    line-height: 1.8;
-}
-
-
-#detailedNotes h3 {
-    margin-top: 20px;
-
-    margin-bottom: 9px;
-
-    font-size: 19px;
-}
-
-
-/* ============================================================
-   CONCEPT CARD
-============================================================ */
-
-.concept-card {
-    border: 1px solid #e5e7eb;
+    border: 1px dashed #d1d5db;
 
     border-radius: 14px;
 
-    padding: 22px;
+    text-align: center;
 
-    margin-bottom: 20px;
-
-    background: #fafbfc;
+    color: #6b7280;
 }
 
-
-.concept-card:last-child {
-    margin-bottom: 0;
-}
-
-
-.concept-card > h3 {
-    font-size: 20px;
-
-    margin-bottom: 18px;
-
-    line-height: 1.4;
-}
-
-
-.concept-section {
-    margin-top: 18px;
-
-    padding-top: 16px;
-
-    border-top: 1px solid #e5e7eb;
-}
-
-
-.concept-section:first-of-type {
-    margin-top: 0;
-
-    padding-top: 0;
-
-    border-top: none;
-}
-
-
-.concept-section h4,
-.text-section h4 {
-    font-size: 14px;
-
+.empty-state h3 {
     margin-bottom: 7px;
 
-    text-transform: uppercase;
+    color: #374151;
 
-    letter-spacing: 0.4px;
-}
-
-
-.concept-section p,
-.text-section p {
-    color: #4b5563;
-
-    line-height: 1.75;
-
-    white-space: pre-wrap;
-}
-
-
-/* ============================================================
-   EXAMPLES
-============================================================ */
-
-.example-card {
-    border: 1px solid #e5e7eb;
-
-    border-radius: 12px;
-
-    padding: 18px;
-
-    margin-bottom: 14px;
-
-    background: #fafbfc;
-}
-
-
-.example-card h4 {
     font-size: 17px;
-
-    margin-bottom: 6px;
 }
 
-
-/* ============================================================
-   QUESTIONS
-============================================================ */
-
-.question-card {
-    border: 1px solid #e5e7eb;
-
-    border-radius: 12px;
-
-    padding: 20px;
-
-    margin-bottom: 15px;
-
-    background: #fafbfc;
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-}
-
-
-.question-card:hover {
-    transform: translateY(-2px);
-
-    box-shadow:
-        0 7px 20px rgba(0, 0, 0, 0.05);
-}
-
-
-.question-card:last-child {
-    margin-bottom: 0;
-}
-
-
-.question-number {
-    display: inline-block;
-
+.empty-state p {
     font-size: 13px;
-
-    font-weight: 700;
-
-    margin-right: 10px;
-}
-
-
-.question-type {
-    display: inline-block;
-
-    padding: 4px 9px;
-
-    border: 1px solid #d1d5db;
-
-    border-radius: 20px;
-
-    font-size: 11px;
-
-    text-transform: uppercase;
-}
-
-
-.question-card h4 {
-    margin-top: 13px;
-
-    margin-bottom: 12px;
-
-    font-size: 17px;
 
     line-height: 1.5;
 }
 
 
-.question-card strong {
-    display: block;
+/* =========================================================
+   FOOTER
+========================================================= */
 
-    margin-bottom: 5px;
+.dashboard-footer {
+    width: 100%;
 
-    font-size: 14px;
+    padding: 20px;
+
+    border-top: 1px solid #e5e7eb;
+
+    background: #ffffff;
+
+    text-align: center;
+
+    color: #9ca3af;
+
+    font-size: 12px;
 }
 
 
-.question-card p {
-    color: #4b5563;
+/* =========================================================
+   TABLET
+========================================================= */
 
-    line-height: 1.7;
-
-    white-space: pre-wrap;
-}
-
-
-/* ============================================================
-   RESPONSIVE
-============================================================ */
-
-@media (max-width: 900px) {
-
-    .videos-grid {
-        grid-template-columns:
-            repeat(2, minmax(0, 1fr));
-    }
-
-}
-
-
-/* ============================================================
-   TABLET / MOBILE
-============================================================ */
-
-@media (max-width: 768px) {
+@media (max-width: 850px) {
 
     .dashboard-header {
-        padding: 17px 4%;
+        padding: 14px 25px;
     }
-
-
-    .dashboard-header h1 {
-        font-size: 20px;
-    }
-
 
     .dashboard-container {
-        width: 94%;
-
-        margin-top: 22px;
+        padding: 28px 18px 45px;
     }
-
 
     .generate-section {
-        padding: 30px 20px;
-
-        border-radius: 17px;
+        padding: 35px 25px;
     }
 
-
-    .generate-section h2 {
-        font-size: 28px;
+    .hero-content h2 {
+        font-size: 31px;
     }
-
 
     #notesForm {
         flex-direction: column;
-
-        width: 100%;
     }
-
 
     .url-input-wrapper {
         width: 100%;
     }
 
-
-    #youtubeUrl {
+    .generate-button {
         width: 100%;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    .dashboard-header {
+        min-height: 70px;
+
+        padding: 12px 16px;
+    }
+
+    .brand {
+        gap: 9px;
+    }
+
+    .brand-icon {
+        width: 37px;
+        height: 37px;
+
+        border-radius: 10px;
+
+        font-size: 16px;
+    }
+
+    .brand h1 {
+        font-size: 16px;
+    }
+
+    .brand p {
+        font-size: 10px;
+    }
+
+    .logout-button {
+        padding: 8px 12px;
+
+        font-size: 12px;
     }
 
 
-    .generate-button {
-        width: 100%;
+    .dashboard-container {
+        padding: 20px 13px 35px;
+    }
 
-        justify-content: center;
+
+    .generate-section {
+        padding: 28px 17px;
+
+        border-radius: 17px;
+
+        margin-bottom: 32px;
+    }
+
+
+    .hero-content h2 {
+        font-size: 27px;
+
+        letter-spacing: -0.5px;
+    }
+
+    .hero-content p {
+        font-size: 13px;
+
+        line-height: 1.6;
+
+        margin-top: 13px;
     }
 
 
@@ -1204,128 +929,82 @@ body {
         align-items: flex-start;
 
         flex-direction: column;
+
+        gap: 12px;
     }
 
+    .section-header h2 {
+        font-size: 23px;
+    }
 
     .refresh-button {
-        width: 100%;
+        align-self: flex-start;
     }
 
 
-    .videos-grid {
-        grid-template-columns: 1fr;
+    /* Saved video becomes vertical */
+
+    .video-card {
+        flex-direction: column !important;
+
+        align-items: stretch !important;
+
+        gap: 12px !important;
+
+        padding: 12px !important;
     }
 
+    .video-card-thumbnail {
+        width: 100% !important;
 
-    .video-info-card {
-        flex-direction: column;
+        max-width: 100% !important;
 
-        align-items: stretch;
+        min-width: 0 !important;
+
+        height: 180px !important;
     }
 
-
-    .video-thumbnail {
-        width: 100%;
-
-        height: auto;
-
-        aspect-ratio: 16 / 9;
+    .video-card-content h3 {
+        font-size: 16px !important;
     }
 
-
-    .video-info h2 {
-        font-size: 20px;
+    .video-card-actions {
+        flex-wrap: wrap !important;
     }
-
-
-    .notes-card {
-        padding: 20px;
-    }
-
-
-    .card-heading h2 {
-        font-size: 19px;
-    }
-
-
-    .notes-header {
-        padding: 18px 4%;
-
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
-
-
-    .back-btn {
-        width: 100%;
-    }
-
 }
 
 
-/* ============================================================
-   SMALL MOBILE
-============================================================ */
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
 
-@media (max-width: 480px) {
+@media (max-width: 420px) {
 
-    .brand-icon {
-        width: 38px;
-
-        height: 38px;
-    }
-
-
-    .dashboard-header h1 {
-        font-size: 18px;
-    }
-
-
-    .dashboard-header p {
-        font-size: 11px;
-    }
-
-
-    .logout-button {
-        padding: 8px 13px;
-
-        font-size: 12px;
-    }
-
-
-    .generate-section {
-        padding: 25px 15px;
-    }
-
-
-    .generate-section h2 {
+    .hero-content h2 {
         font-size: 24px;
     }
 
-
-    .hero-content p {
-        font-size: 13px;
+    .hero-badge {
+        font-size: 11px;
     }
 
-
-    .notes-card {
-        padding: 16px;
+    .url-input-wrapper {
+        height: 50px;
     }
 
-
-    .concept-card {
-        padding: 14px;
+    .generate-button {
+        height: 50px;
     }
 
-
-    .concept-card > h3 {
-        font-size: 18px;
+    .video-card-thumbnail {
+        height: 160px !important;
     }
 
+    .video-card-actions .view-notes-btn,
+    .video-card-actions .delete-video-btn {
+        padding: 7px 11px !important;
 
-    .question-card {
-        padding: 15px;
+        font-size: 12px !important;
     }
-
 }
+
